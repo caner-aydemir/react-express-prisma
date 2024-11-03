@@ -1,18 +1,18 @@
-import React, { useState, useMemo, FC, useContext, useReducer } from 'react'
+import React, { useState, useMemo, FC, useContext, useReducer, useEffect } from 'react'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Tooltip, Chip, Spinner, Pagination } from "@nextui-org/react";
 import { EditIcon } from "../../icons/EditIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 import { truncateText } from "../../helpers/truncateText";
 import { UserData } from '../../interfaces/Users';
-import { UserContext } from '../../Provider/context';
-import { initialState, userReducer } from '../../reducers/userReducer';
 
 interface USERPROPS {
-    users: UserData[]
+    usersArray: UserData[]
+    deleteUserState: (deletedUser: UserData) => void
+    setOpenUpdateUserModal: React.Dispatch<React.SetStateAction<boolean>>
+    setSelectUserData: (userData: UserData) => void
+    searchValue: string
 }
-const UserTable: FC<USERPROPS> = ({ users }) => {
-    const { deleteUserState, setOpenUpdateUserModal,
-        setSelectUserData } = useContext<any>(UserContext)
+const UserTable: FC<USERPROPS> = ({ usersArray, searchValue, deleteUserState, setOpenUpdateUserModal, setSelectUserData }) => {
     const columns = [
         { key: "name", label: "NAME" },
         { key: "email", label: "EMAIL" },
@@ -20,8 +20,34 @@ const UserTable: FC<USERPROPS> = ({ users }) => {
 
         { key: "actions", label: "ACTIONS" },
     ];
+    const HighlightText = ({ text }: { text: string; }) => {
+        console.log("text", text)
+        console.log("searchValue", searchValue)
+        if (!searchValue.trim()) {
+            console.log("yes")
+            return <span>{text}</span>;
+        }
+
+        // Arama metnini büyük/küçük harf duyarsız bir şekilde bulmak için regex kullanıyoruz
+        const regex = new RegExp(`(${searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        const parts = text.split(regex);
+
+        return (
+            <span>
+                {parts.map((part, index) =>
+                    part.toLowerCase() === searchValue.toLowerCase() ? (
+                        // Eşleşen kısımlar sarı renkle boyanır
+                        <span key={index} className="bg-yellow-400">{part}</span>
+                    ) : (
+                        <span key={index}>{part}</span>
+                    )
+                )}
+            </span>
+        );
+    };
 
     const renderCellContent = (item: any, columnKey: string) => {
+
         switch (columnKey) {
             case "name":
                 return (
@@ -32,9 +58,10 @@ const UserTable: FC<USERPROPS> = ({ users }) => {
                         }}
                     />
                 );
-
             case "email":
-                return <span className='text-xs' >{truncateText(item.email)}</span>;
+                return (
+                    <span className='test-xs'>{truncateText(item.email)}</span>
+                )
             case "age":
                 return <span className='text-xs'>{item.age}</span>;
             case "actions":
@@ -61,14 +88,14 @@ const UserTable: FC<USERPROPS> = ({ users }) => {
     const [page, setPage] = React.useState(1);
     const rowsPerPage = 7;
 
-    const pages = Math.ceil(users.length / rowsPerPage);
+    const pages = Math.ceil(usersArray?.length / rowsPerPage);
 
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        return users.slice(start, end);
-    }, [page, users]);
+        return usersArray.slice(start, end);
+    }, [page, usersArray]);
 
 
     const openUpdateModalToggle = (userData: UserData) => {

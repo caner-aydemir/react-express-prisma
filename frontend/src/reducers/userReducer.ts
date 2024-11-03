@@ -7,6 +7,12 @@ export type UserAction =
     | { type: "ADD_USER"; payload: UserData }
     | { type: "UPDATE_USER"; payload: UserData }
     | { type: "DELETE_USER"; payload: UserData }
+    | { type: "FILTERED_USER"; payload: UserData[] }
+    | { type: "RESET_FILTER" };  // Filtreyi sıfırlama aksiyonu
+
+
+
+
 
 
 
@@ -14,6 +20,7 @@ export type UserAction =
 export const initialState: UserState = {
     users: [],
     loading: true,
+    filtered_users: [],  // Filtrelenmiş kullanıcılar
     error: null
 }
 
@@ -43,6 +50,7 @@ export const userReducer = (state: UserState, action: UserAction): UserState => 
                     user.email !== action.payload.email
                 ),
             };
+
         default:
             return state
     }

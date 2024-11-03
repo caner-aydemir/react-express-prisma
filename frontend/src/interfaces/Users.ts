@@ -8,6 +8,7 @@ export interface UserData {
 export interface UserState {
     users: UserData[] | [],
     loading: boolean,
+    filtered_users?: UserData[] | [],
     error: string | null
 }
 

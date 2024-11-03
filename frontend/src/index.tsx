@@ -3,28 +3,25 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { NextUIProvider } from "@nextui-org/react";
-import { UserProvider } from './Provider/context';
+import {NextUIProvider} from "@nextui-org/react";
+import AppRouter from "./AppRouter/appRouter";
+import {UserProvider} from './Provider/context';
+import Header from "./components/Header/Header";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById('root') as HTMLElement
 );
 
 root.render(
-  <React.StrictMode>
-    <NextUIProvider>
+    <React.StrictMode>
+        <NextUIProvider>
+            <UserProvider>
+                <AppRouter/>
+            </UserProvider>
 
-      <UserProvider>
+        </NextUIProvider>
 
-
-        <App />
-
-      </UserProvider>
-
-
-
-    </NextUIProvider>
-  </React.StrictMode>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -17,7 +17,6 @@ const AddUserModal = ({ show, close }: IAddUserModal) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null)
-
     const { name, age, email } = formData;
 
     const isNotEmpty = name && email && Number(age);

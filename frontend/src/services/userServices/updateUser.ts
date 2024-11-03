@@ -3,7 +3,6 @@ import { UserData } from '../../interfaces/Users'
 
 export const updateUser = async (userData: UserData) => {
 
-
     const request = await fetch("http://localhost:5000/api/updateUser", {
         method: "PUT",
         headers: {

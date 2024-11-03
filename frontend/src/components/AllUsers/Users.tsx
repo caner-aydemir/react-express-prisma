@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "../../Provider/context";
 import { Spinner } from "@nextui-org/react";
 import UserTable from "./UserTable";  // Change the import to UserTable
@@ -6,14 +6,14 @@ import { UserData } from "../../interfaces/Users";
 import UserCrudToast from "../UserCrudToast";
 
 const Users = () => {
-    const context = useContext(UserContext);
+    const { state, usersArray, setUsersArray, deleteUserState, setOpenUpdateUserModal,
+        setSelectUserData, searchValue } = useContext<any>(UserContext)
 
-    if (!context) {
-        return <p>Context is not available</p>;
-    }
+    const { users, loading, error } = state
 
-    const { state } = context;
-    const { users, loading, error } = state;
+    useEffect(() => {
+        setUsersArray(users)
+    }, [users])
 
     if (loading) return <Spinner label="Loading..." color="warning" />;
     if (error) {
@@ -29,7 +29,14 @@ const Users = () => {
         <>
             {
                 users.length > 0 ?
-                    <UserTable users={users as UserData[]} />  // Use the correct component UserTable
+                    <UserTable
+                        usersArray={usersArray}
+                        deleteUserState={deleteUserState}
+                        setOpenUpdateUserModal={setOpenUpdateUserModal}
+                        setSelectUserData={setSelectUserData}
+                        searchValue={searchValue}
+
+                    />  // Use the correct component UserTable
                     :
                     <p className="text-center text-2xl">Elimizde sana user kalmadı :) <br /> <span className="text-xl">Yukarıda ki butondan hemen oluşturabilirsin.</span></p>
             }

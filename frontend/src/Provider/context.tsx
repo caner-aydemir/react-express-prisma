@@ -1,30 +1,40 @@
 // context/UserContext.tsx
 import React, { createContext, useReducer, ReactNode, useEffect, useState } from "react";
 import { userReducer, initialState } from "../reducers/userReducer";
+import {loginUserReducer,UserInitialState} from "../reducers/loginUserReducer"
 import { UserState, UserData } from "../interfaces/Users";
-import { fetchUsers as fetchUsersFromApi } from "../services/userServices/fetchUser";  // API fonksiyonunu import ediyoruz
+import { fetchUsers as fetchUsersFromApi } from "../services/userServices/fetchUser";
+import {LoginUser} from "../interfaces/LoginUser";  // API fonksiyonunu import ediyoruz
 interface UserContextProps {
     state: UserState;
+    user : LoginUser;
     fetchUsers: () => void;
+    logoutUser:()=>void
     addNewUserState: (newUser: UserData) => void;
     updateNewUserState: (updatedUser: UserData) => void
     deleteUserState: (updatedUser: UserData) => void
+    setLoginUser : (loginUser : LoginUser) =>void
     openAddUserModal: boolean
     setOpenAddUserModal: React.Dispatch<React.SetStateAction<boolean>>
     openUpdateUserModal: boolean
     setOpenUpdateUserModal: React.Dispatch<React.SetStateAction<boolean>>
     selectUserData: never[]
     setSelectUserData: React.Dispatch<React.SetStateAction<never[]>>
-
+    usersArray: UserData[]
+    setUsersArray: React.Dispatch<React.SetStateAction<UserData[]>>
+    searchValue: string
+    setSearchValue: React.Dispatch<React.SetStateAction<string>>
 }
 export const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
+    const [user, dispatchLoginUserReducer] = useReducer(loginUserReducer, UserInitialState);
     const [openAddUserModal, setOpenAddUserModal] = useState<boolean>(false)
     const [openUpdateUserModal, setOpenUpdateUserModal] = useState<boolean>(false)
     const [selectUserData, setSelectUserData] = useState([])
-
+    const [usersArray, setUsersArray] = useState<UserData[]>([])
+    const [searchValue, setSearchValue] = useState("")
     async function addRandomFakeUser() {
         const userData = [
             {
@@ -155,13 +165,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const setLoginUser = (loginUser : LoginUser) =>{
+        dispatchLoginUserReducer({type: "LOGIN_USER_DATA" , payload:loginUser})
+    }
+    const logoutUser = ()=>{
+        dispatchLoginUserReducer({type: "LOGIN_USER_DATA" , payload:UserInitialState})
+
+    }
+
+
     const addNewUserState = (newUser: UserData) => {
         dispatch({ type: "ADD_USER", payload: newUser })
     }
 
     const updateNewUserState = (updatedUser: UserData) => {
         dispatch({ type: "UPDATE_USER", payload: updatedUser });
-
     }
 
     const deleteUserState = async (deletedUser: UserData) => {
@@ -184,6 +202,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
 
     useEffect(() => {
+        const loginUser = localStorage.getItem("loginUser")
+        if (loginUser){
+            const parseData = JSON.parse(loginUser)
+            setLoginUser(parseData)
+        }
         fetchUsers();
     }, []);
 
@@ -195,7 +218,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             updateNewUserState, deleteUserState,
             openAddUserModal, setOpenAddUserModal,
             openUpdateUserModal, setOpenUpdateUserModal, selectUserData,
-            setSelectUserData
+            setSelectUserData, usersArray,
+            setUsersArray, searchValue,
+            setSearchValue,setLoginUser, user,logoutUser
         }}>
             {children}
         </UserContext.Provider>
