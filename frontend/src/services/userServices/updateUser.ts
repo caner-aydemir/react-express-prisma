@@ -2,8 +2,10 @@ import React from 'react'
 import { UserData } from '../../interfaces/Users'
 
 export const updateUser = async (userData: UserData) => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
-    const request = await fetch("http://localhost:5000/api/updateUser", {
+
+    const request = await fetch(`${backendUrl}/api/updateUser`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",

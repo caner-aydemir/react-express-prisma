@@ -1,8 +1,10 @@
 import { UserData } from "../../interfaces/Users";
 
 export const addUser = async (userData: UserData) => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
     try {
-        const response = await fetch("http://localhost:5000/api/addUser", {
+        const response = await fetch(`${backendUrl}/api/addUser`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -1,6 +1,8 @@
 export const RegisterUser = async (userData: any) => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
     try {
-        const request = await fetch("http://localhost:5000/api/register", {
+        const request = await fetch(`${backendUrl}/api/register`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(userData)
