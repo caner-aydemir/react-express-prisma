@@ -7,10 +7,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "prisma generate",
-    "dev": "nodemon app.mjs",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build",
-    "build": "prisma generate"
+    "dev": "nodemon app.mjs"
   },
   "keywords": [],
   "author": "",
